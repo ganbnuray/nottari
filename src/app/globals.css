@@ -139,7 +139,7 @@ body {
     }
 
     .selectedCell:after {
-      background: #959595;
+      background: rgba(0, 123, 255, 0.25); /* ✅ Nice soft blue */
       content: "";
       left: 0;
       right: 0;
@@ -148,6 +148,7 @@ body {
       pointer-events: none;
       position: absolute;
       z-index: 2;
+      border: 2px solid rgba(0, 123, 255, 0.5); /* ✅ Subtle border for better visibility */ /* Optional: makes selection look smoother */
     }
 
     .column-resize-handle {
