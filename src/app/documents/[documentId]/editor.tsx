@@ -18,6 +18,7 @@ import HighLight from "@tiptap/extension-highlight";
 import Link from "@tiptap/extension-link";
 import TextAlign from "@tiptap/extension-text-align";
 import { FontSizeExtension } from "@/extensions/font-size";
+import { LineHeightExtension } from "@/extensions/line-height";
 export const Editor = () => {
   const { setEditor } = useEditorStore();
   const editor = useEditor({
@@ -83,6 +84,10 @@ export const Editor = () => {
         defaultAlignment: "left",
       }),
       FontSizeExtension,
+      LineHeightExtension.configure({
+        types: ["heading", "paragraph"],
+        defaultLineHeight: "normal",
+      }),
     ],
     content: `
         <table>
