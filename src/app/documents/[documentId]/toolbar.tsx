@@ -22,6 +22,10 @@ import {
   AlignRightIcon,
   AlignHorizontalJustifyStartIcon,
   AlignJustifyIcon,
+  ListIcon,
+  ListOrderedIcon,
+  MinusIcon,
+  PlusIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEditorStore } from "@/store/use-editor-store";
@@ -34,7 +38,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { type Level } from "@tiptap/extension-heading";
 import { type ColorResult, SketchPicker, CirclePicker } from "react-color";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -44,6 +48,256 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
+// const FontSizeButton = () => {
+//   const { editor } = useEditorStore();
+//   const currentFontSize = editor?.getAttributes("textStyle").fontSize
+//     ? editor?.getAttributes("textStyle").fontSize.replace("px", "")
+//     : "16";
+//   const [fontSize, setFontSize] = useState(currentFontSize);
+//   const [inputValue, setInputValue] = useState(fontSize);
+//   const [isEditing, setIsEditing] = useState(false);
+
+//   const updateFontSize = (newSize: string) => {
+//     const size = parseInt(newSize);
+
+//     if (!isNaN(size) && size > 0) {
+//       editor?.chain().focus().setFontSize(`${size}px`).run();
+//       setFontSize(newSize);
+//       setInputValue(newSize);
+//       setIsEditing(false);
+//     }
+//   };
+
+//   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     setInputValue(e.target.value);
+//   };
+
+//   const handleInputBlur = () => {
+//     updateFontSize(inputValue);
+//   };
+
+//   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+//     if (e.key == "Enter") {
+//       e.preventDefault();
+//       updateFontSize(inputValue);
+//       editor?.commands.focus();
+//     }
+//   };
+
+//   const increment = () => {
+//     const newSize = parseInt(fontSize) + 1;
+//     updateFontSize(newSize.toString());
+//   };
+
+//   const decrement = () => {
+//     const newSize = parseInt(fontSize) - 1;
+//     if (newSize > 0) {
+//       updateFontSize(newSize.toString());
+//     }
+//   };
+//   return (
+//     <div className="flex items-center gap-x-0.5">
+//       <button
+//         onClick={decrement}
+//         className="h-7 w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80 focus:outline-none focus:ring-2 focus:ring-neutral-300"
+//       >
+//         <MinusIcon className="size-4" />
+//       </button>
+//       {isEditing ? (
+//         <input
+//           type="text"
+//           value={inputValue}
+//           onChange={handleInputChange}
+//           onBlur={handleInputBlur}
+//           onKeyDown={handleKeyDown}
+//           className="h-7 w-10 text-sm text-center rounded-sm border border-neutral-400 bg-transparent focus:outline-none focus:ring-0"
+//         />
+//       ) : (
+//         <button
+//           onClick={() => {
+//             setIsEditing(true);
+//             setFontSize(currentFontSize);
+//           }}
+//           className="h-7 w-10 text-sm text-center rounded-sm border border-neutral-400 focus:outline-none bg-transparent cursor-text focus:ring-2 focus:ring-neutral-300"
+//         >
+//           {currentFontSize}
+//         </button>
+//       )}
+//       <button
+//         onClick={increment}
+//         className="h-7 w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80 focus:outline-none focus:ring-2 focus:ring-neutral-300"
+//       >
+//         <PlusIcon className="size-4" />
+//       </button>
+//     </div>
+//   );
+// };
+
+const FontSizeButton = () => {
+  const { editor } = useEditorStore();
+
+  // Get current font size from editor
+  const getCurrentFontSize = () => {
+    const attrs = editor?.getAttributes("textStyle");
+    return attrs?.fontSize ? attrs.fontSize.replace("px", "") : "16";
+  };
+
+  const [fontSize, setFontSize] = useState(() => getCurrentFontSize());
+  const [inputValue, setInputValue] = useState(fontSize);
+  const [isEditing, setIsEditing] = useState(false);
+
+  // Update state when editor selection changes
+  useEffect(() => {
+    if (!editor) return;
+
+    const updateFontSizeState = () => {
+      const currentSize = getCurrentFontSize();
+      setFontSize(currentSize);
+      if (!isEditing) {
+        setInputValue(currentSize);
+      }
+    };
+
+    // Listen to selection updates
+    editor.on("selectionUpdate", updateFontSizeState);
+    editor.on("transaction", updateFontSizeState);
+
+    return () => {
+      editor.off("selectionUpdate", updateFontSizeState);
+      editor.off("transaction", updateFontSizeState);
+    };
+  }, [editor, isEditing]);
+
+  const updateFontSize = (newSize: string) => {
+    const size = parseInt(newSize);
+
+    if (!isNaN(size) && size > 0) {
+      editor?.chain().focus().setFontSize(`${size}px`).run();
+      setFontSize(newSize);
+      setInputValue(newSize);
+      setIsEditing(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleInputBlur = () => {
+    updateFontSize(inputValue);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      updateFontSize(inputValue);
+      editor?.commands.focus();
+    }
+  };
+
+  const increment = () => {
+    const newSize = parseInt(fontSize) + 1;
+    updateFontSize(newSize.toString());
+  };
+
+  const decrement = () => {
+    const newSize = parseInt(fontSize) - 1;
+    if (newSize > 0) {
+      updateFontSize(newSize.toString());
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-x-0.5">
+      <button
+        onClick={decrement}
+        className="h-7 w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80 focus:outline-none focus:ring-2 focus:ring-neutral-300"
+      >
+        <MinusIcon className="size-4" />
+      </button>
+      {isEditing ? (
+        <input
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          onBlur={handleInputBlur}
+          onKeyDown={handleKeyDown}
+          className="h-7 w-10 text-sm text-center rounded-sm border border-neutral-400 bg-transparent focus:outline-none focus:ring-0"
+          autoFocus
+        />
+      ) : (
+        <button
+          onClick={() => {
+            setIsEditing(true);
+          }}
+          className="h-7 w-10 text-sm text-center leading-7 rounded-sm border border-neutral-400 focus:outline-none bg-transparent cursor-text focus:ring-2 focus:ring-neutral-300"
+        >
+          {fontSize}
+        </button>
+      )}
+      <button
+        onClick={increment}
+        className="h-7 w-7 shrink-0 flex items-center justify-center rounded-sm hover:bg-neutral-200/80 focus:outline-none focus:ring-2 focus:ring-neutral-300"
+      >
+        <PlusIcon className="size-4" />
+      </button>
+    </div>
+  );
+};
+
+const ListButton = () => {
+  const { editor } = useEditorStore();
+
+  type ListItem = {
+    label: string;
+    icon: React.ComponentType<{ className?: string }>;
+    isActive: () => boolean;
+    onClick: () => void;
+  };
+
+  const lists: ListItem[] = [
+    {
+      label: "Bullet list",
+      icon: ListIcon,
+      isActive: () => editor?.isActive("bulletList") ?? false,
+      onClick: () => editor?.chain().focus().toggleBulletList().run(),
+    },
+    {
+      label: "Ordered list",
+      icon: ListOrderedIcon,
+      isActive: () => editor?.isActive("orderedList") ?? false,
+      onClick: () => {
+        editor?.chain().focus().toggleOrderedList().run();
+      },
+    },
+  ];
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="h-7 min-w-7 shrink-0 flex flex-col items-center justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm focus:outline-none focus:ring-2 focus:ring-neutral-300">
+          <ListIcon className="size-4" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="p-1 flex flex-col gap-y-1">
+        {lists.map(({ label, icon: Icon, isActive, onClick }) => (
+          <button
+            key={label}
+            onClick={onClick}
+            className={cn(
+              "flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
+              isActive() && "bg-neutral-200/80"
+            )}
+          >
+            <Icon className="size-4" />
+            <span className="size-sm">{label}</span>
+          </button>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 const AlignButton = () => {
   const { editor } = useEditorStore();
@@ -476,7 +730,7 @@ export const Toolbar = () => {
       <Separator orientation="vertical" className="h-6 bg-neutral-300" />
       <HeadingLevelButton />
       <Separator orientation="vertical" className="h-6 bg-neutral-300" />
-      {/* TODO: Font size */}
+      <FontSizeButton />
       <Separator orientation="vertical" className="h-6 bg-neutral-300" />
       {sections[1].map((item) => (
         <ToolbarButton key={item.label} {...item} />
@@ -487,8 +741,8 @@ export const Toolbar = () => {
       <LinkButton />
       <ImageButton />
       <AlignButton />
+      <ListButton />
       {/* TODO: Line height */}
-      {/* TODO: List */}
       {sections[2].map((item) => (
         <ToolbarButton key={item.label} {...item} />
       ))}
