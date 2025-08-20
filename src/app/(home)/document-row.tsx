@@ -1,20 +1,27 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Doc } from "../../../convex/_generated/dataModel";
-import {
-  Building2Icon,
-  LucideUserCircle,
-  MoreVertical,
-  Table,
-} from "lucide-react";
+import { Building2Icon, LucideUserCircle } from "lucide-react";
 import { SiGoogledocs } from "react-icons/si";
 import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
+import { DocumentMenu } from "./document-menu";
+import { useRouter } from "next/navigation";
 interface DocumentRowProps {
   document: Doc<"documents">;
 }
 export const DocumentRow = ({ document }: DocumentRowProps) => {
+  const router = useRouter();
+  const onNewTabClick = (id: string) => {
+    window.open(`/documents/${id}`, "_blank");
+  };
+
+  const onRowClick = (id: string) => {
+    router.push(`/documents/${id}`);
+  };
   return (
-    <TableRow className="cursor-pointer">
+    <TableRow
+      onClick={() => onRowClick(document._id)}
+      className="cursor-pointer"
+    >
       <TableCell className="w-[50px]">
         <SiGoogledocs className="size-6 fill-blue-500" />
       </TableCell>
@@ -31,9 +38,11 @@ export const DocumentRow = ({ document }: DocumentRowProps) => {
         {format(new Date(document._creationTime), "MMM dd, yyy")}
       </TableCell>
       <TableCell className="flex justify-end">
-        <Button variant={"ghost"} size={"icon"} className="rounded-full">
-          <MoreVertical className="size-4" />
-        </Button>
+        <DocumentMenu
+          documentId={document._id}
+          title={document.title}
+          onNewTab={onNewTabClick}
+        />
       </TableCell>
     </TableRow>
   );
