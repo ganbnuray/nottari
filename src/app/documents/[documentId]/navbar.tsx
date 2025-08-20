@@ -86,10 +86,10 @@ export const Navbar = () => {
       <div className="flex gap-2 items-center">
         <Link href={"/"}>
           <Image
-            src="/logo.svg"
+            src="/logo-without-title.svg"
             alt="Logo of Nottari"
-            width={100}
-            height={100}
+            width={40}
+            height={40}
             draggable={false}
           />
         </Link>
