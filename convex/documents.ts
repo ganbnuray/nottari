@@ -25,10 +25,29 @@ export const create = mutation({
 });
 
 export const get = query({
-  args: { paginationOpts: paginationOptsValidator },
-  handler: async (ctx, args) => {
-    return await ctx.db.query("documents").paginate(args.paginationOpts);
-    // do something with `tasks`
+  args: {
+    paginationOpts: paginationOptsValidator,
+    search: v.optional(v.string()),
+  },
+  handler: async (ctx, { search, paginationOpts }) => {
+    const user = await ctx.auth.getUserIdentity();
+
+    if (!user) {
+      throw new ConvexError("Unauthorized operation: user not found");
+    }
+
+    if (search) {
+      return await ctx.db
+        .query("documents")
+        .withSearchIndex("search_title", (q) =>
+          q.search("title", search).eq("ownerId", user.subject)
+        )
+        .paginate(paginationOpts);
+    }
+    return await ctx.db
+      .query("documents")
+      .withIndex("by_owner_id", (q) => q.eq("ownerId", user.subject))
+      .paginate(paginationOpts);
   },
 });
 
@@ -37,19 +56,19 @@ export const removeById = mutation({
   handler: async (ctx, args) => {
     const user = await ctx.auth.getUserIdentity();
     if (!user) {
-      throw new ConvexError("Unauthorized operation");
+      throw new ConvexError("Unauthorized operation: user not found");
     }
 
     const document = await ctx.db.get(args.id);
 
     if (!document) {
-      throw new ConvexError("Document doesn't exist");
+      throw new ConvexError("Unauthorized operation: document not found");
     }
 
     const isOwner = document.ownerId === user.subject;
 
     if (!isOwner) {
-      throw new ConvexError("Unauthorized operation");
+      throw new ConvexError("Unauthorized operation: owner not found");
     }
 
     return ctx.db.delete(args.id);
@@ -61,19 +80,19 @@ export const updateById = mutation({
   handler: async (ctx, args) => {
     const user = await ctx.auth.getUserIdentity();
     if (!user) {
-      throw new ConvexError("Unauthorized operation");
+      throw new ConvexError("Unauthorized operation: user not found");
     }
 
     const document = await ctx.db.get(args.id);
 
     if (!document) {
-      throw new ConvexError("Document doesn't exist");
+      throw new ConvexError("Unauthorized operation: document not found");
     }
 
     const isOwner = document.ownerId === user.subject;
 
     if (!isOwner) {
-      throw new ConvexError("Unauthorized operation");
+      throw new ConvexError("Unauthorized operation: owner not found");
     }
 
     return ctx.db.patch(args.id, { title: args.title });
