@@ -48,7 +48,7 @@ export async function POST(req: Request) {
       name:
         user.firstName && user.lastName
           ? `${user.firstName} ${user.lastName}`
-          : "Anonymous",
+          : user.primaryEmailAddress?.emailAddress || "Anonymous",
       avatar: user.imageUrl,
     },
   });
