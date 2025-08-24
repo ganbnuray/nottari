@@ -12,7 +12,6 @@ interface SessionClaims {
   o?: {
     id: string;
   };
-  // Add other properties as needed
 }
 
 export async function getDocuments(ids: Id<"documents">[]) {
