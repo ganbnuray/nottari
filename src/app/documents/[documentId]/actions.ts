@@ -41,6 +41,7 @@ export async function getUsers() {
       name:
         user.fullName ?? user.primaryEmailAddress?.emailAddress ?? "Anonymous",
       avatar: user.imageUrl,
+      color: "",
     }));
 
     return users;
@@ -56,6 +57,7 @@ export async function getUsers() {
           currentUser.primaryEmailAddress?.emailAddress ??
           "Anonymous",
         avatar: currentUser.imageUrl,
+        color: "",
       },
     ];
   }
