@@ -27,7 +27,6 @@ export const Editor = () => {
   const leftMargin = useStorage((root) => root.leftMargin);
   const rightMargin = useStorage((root) => root.rightMargin);
   const liveblocks = useLiveblocksExtension();
-  immediatelyRender: false;
   const { setEditor } = useEditorStore();
   const editor = useEditor({
     onCreate({ editor }) {

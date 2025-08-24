@@ -20,7 +20,6 @@ import {
   AlignLeftIcon,
   AlignCenterIcon,
   AlignRightIcon,
-  AlignHorizontalJustifyStartIcon,
   AlignJustifyIcon,
   ListIcon,
   ListOrderedIcon,
@@ -39,7 +38,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { type Level } from "@tiptap/extension-heading";
 import { type ColorResult, SketchPicker, CirclePicker } from "react-color";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -107,11 +106,11 @@ const LineHeightButton = () => {
 const FontSizeButton = () => {
   const { editor } = useEditorStore();
 
-  // Get current font size from editor
-  const getCurrentFontSize = () => {
+  // Get current font size from editor - wrapped in useCallback to memoize
+  const getCurrentFontSize = useCallback(() => {
     const attrs = editor?.getAttributes("textStyle");
     return attrs?.fontSize ? attrs.fontSize.replace("px", "") : "16";
-  };
+  }, [editor]);
 
   const [fontSize, setFontSize] = useState(() => getCurrentFontSize());
   const [inputValue, setInputValue] = useState(fontSize);
@@ -137,7 +136,7 @@ const FontSizeButton = () => {
       editor.off("selectionUpdate", updateFontSizeState);
       editor.off("transaction", updateFontSizeState);
     };
-  }, [editor, isEditing]);
+  }, [editor, isEditing, getCurrentFontSize]);
 
   const updateFontSize = (newSize: string) => {
     const size = parseInt(newSize);

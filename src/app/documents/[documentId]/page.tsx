@@ -3,11 +3,11 @@ import { Id } from "../../../../convex/_generated/dataModel";
 import { Document } from "./document";
 import { auth } from "@clerk/nextjs/server";
 import { preloadQuery } from "convex/nextjs";
-interface DocumntIdPageProps {
+interface DocumentIdPageProps {
   params: Promise<{ documentId: Id<"documents"> }>;
 }
 
-const DocumentIdPage = async ({ params }: DocumntIdPageProps) => {
+const DocumentIdPage = async ({ params }: DocumentIdPageProps) => {
   const { documentId } = await params;
   const { getToken } = await auth();
   const token = (await getToken({ template: "convex" })) ?? undefined;

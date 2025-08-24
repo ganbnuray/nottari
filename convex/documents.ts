@@ -2,10 +2,15 @@ import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { paginationOptsValidator } from "convex/server";
 
+interface DocumentResult {
+  id: string;
+  name: string;
+}
+
 export const getByIds = query({
   args: { ids: v.array(v.id("documents")) },
   handler: async (ctx, { ids }) => {
-    const documents = [];
+    const documents: DocumentResult[] = [];
 
     for (const id of ids) {
       const document = await ctx.db.get(id);

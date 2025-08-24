@@ -2,6 +2,8 @@
 import { useOthers, useSelf } from "@liveblocks/react/suspense";
 import { ClientSideSuspense } from "@liveblocks/react";
 import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
+
 const AVATAR_SIZE = 36;
 
 export const Avatars = () => {
@@ -11,6 +13,7 @@ export const Avatars = () => {
     </ClientSideSuspense>
   );
 };
+
 interface AvatarProps {
   src: string;
   name: string;
@@ -52,7 +55,14 @@ const Avatar = ({ src, name }: AvatarProps) => {
       <div className="opacity-0 hover:opacity-100 absolute top-full py-1 px-2 text-white text-xs rounded-lg mt-2.5 z-10 bg-black whitespace-nowrap transition-opacity">
         {name}
       </div>
-      <img src={src} alt={name} className="size-full rounded-full" />
+      <Image
+        src={src}
+        alt={name}
+        width={AVATAR_SIZE}
+        height={AVATAR_SIZE}
+        className="rounded-full object-cover"
+        unoptimized={src.startsWith("data:") || src.includes("clerk")}
+      />
     </div>
   );
 };

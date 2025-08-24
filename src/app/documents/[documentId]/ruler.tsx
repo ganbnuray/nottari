@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { useStorage, useMutation } from "@liveblocks/react";
+
 const markers = Array.from({ length: 83 }, (_, i) => i);
 
 export const Ruler = () => {
@@ -63,7 +64,14 @@ export const Ruler = () => {
       window.removeEventListener("mousemove", handleMouseMoveGlobal);
       window.removeEventListener("mouseup", handleMouseUpGlobal);
     };
-  }, [isDraggingLeft, isDraggingRight, leftMargin, rightMargin]);
+  }, [
+    isDraggingLeft,
+    isDraggingRight,
+    leftMargin,
+    rightMargin,
+    setLeftMargin,
+    setRightMargin,
+  ]);
 
   const handleLeftMouseDown = () => {
     setIsDraggingLeft(true);

@@ -7,6 +7,15 @@ const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 const liveblocks = new Liveblocks({
   secret: process.env.LIVEBLOCKS_SECRET_KEY!,
 });
+
+// Define the expected shape of sessionClaims
+interface SessionClaims {
+  o?: {
+    id: string;
+  };
+  // Add other properties as needed
+}
+
 export async function POST(req: Request) {
   const { sessionClaims } = await auth();
 
@@ -33,7 +42,7 @@ export async function POST(req: Request) {
 
   const isOwner = document.ownerId === user.id;
   const isOrganizationMember = document.organizationId
-    ? document.organizationId === (sessionClaims.o as any)?.id
+    ? document.organizationId === (sessionClaims as SessionClaims).o?.id
     : false;
 
   console.log(isOwner);
