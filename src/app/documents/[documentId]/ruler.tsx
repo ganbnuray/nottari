@@ -23,7 +23,6 @@ export const Ruler = () => {
   const rulerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // TODO: Make collaborative
   useEffect(() => {
     const handleMouseMoveGlobal = (e: MouseEvent) => {
       if ((isDraggingLeft || isDraggingRight) && rulerRef.current) {
