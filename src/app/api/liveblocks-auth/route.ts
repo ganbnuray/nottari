@@ -2,7 +2,7 @@ import { Liveblocks } from "@liveblocks/node";
 import { ConvexHttpClient } from "convex/browser";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { api } from "../../../../convex/_generated/api";
-
+import { hslToHex } from "@/constants/hslToHex";
 const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 const liveblocks = new Liveblocks({
   secret: process.env.LIVEBLOCKS_SECRET_KEY!,
@@ -52,13 +52,21 @@ export async function POST(req: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
+  const name =
+    user.firstName && user.lastName
+      ? `${user.firstName} ${user.lastName}`
+      : user.primaryEmailAddress?.emailAddress || "Anonymous";
+
+  const nameToNumber = name
+    .split("")
+    .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const hue = Math.abs(nameToNumber) % 360;
+  const color = hslToHex(hue, 80, 60); // HEX format
   const session = liveblocks.prepareSession(user.id, {
     userInfo: {
-      name:
-        user.firstName && user.lastName
-          ? `${user.firstName} ${user.lastName}`
-          : user.primaryEmailAddress?.emailAddress || "Anonymous",
+      name,
       avatar: user.imageUrl,
+      color,
     },
   });
 
