@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { Toaster } from "sonner";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "@liveblocks/react-ui/styles.css";
 import "@liveblocks/react-tiptap/styles.css";
 import "./globals.css";
@@ -33,6 +34,7 @@ export default function RootLayout({
             {children}
           </ConvexClientProvider>
         </NuqsAdapter>
+        <SpeedInsights />
       </body>
     </html>
   );
